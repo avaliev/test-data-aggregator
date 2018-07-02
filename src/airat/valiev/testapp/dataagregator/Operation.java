@@ -1,5 +1,6 @@
 package airat.valiev.testapp.dataagregator;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -11,7 +12,7 @@ public class Operation {
 
     private LocalDateTime dateTime;
 
-    private double sum;
+    private BigDecimal sum;
 
 
     public Long getId() {
@@ -42,11 +43,11 @@ public class Operation {
         this.dateTime = dateTime;
     }
 
-    public double getSum() {
+    public BigDecimal getSum() {
         return sum;
     }
 
-    public void setSum(double sum) {
+    public void setSum(BigDecimal sum) {
         this.sum = sum;
     }
 }

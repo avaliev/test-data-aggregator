@@ -21,7 +21,7 @@ public class TestDataGenerator {
     public static void main(String[] args) throws IOException {
         String inputFileName = null;
         String outputFileName = null;
-        long countOfOperations = 10000;
+        long countOfOperations = 100000;
         if (args.length == 3) {
             inputFileName = args[0];
             countOfOperations = Long.parseLong(args[1]);
@@ -37,33 +37,29 @@ public class TestDataGenerator {
             logger.log(Level.SEVERE, "reading list of POS failed", e);
         }
 
-        FileWriter fileWriter = new FileWriter(outputFileName);
-        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(outputFileName))) {
+            float minSum = 10_000f;
+            float maxSum = 100_000f;
 
-        float minSum = 10_000f;
-        float maxSum = 100_000f;
+            Random random = new Random();
+            TimeGenerator timeGenerator = new TimeGenerator(LocalDateTime.now().getYear());
 
-        Random random = new Random();
-        TimeGenerator timeGenerator = new TimeGenerator(LocalDateTime.now().getYear());
+            for (int i = 0; i <= countOfOperations; i++) {
+                int rndPos = random.nextInt(posList.size());
+                LocalDateTime time = timeGenerator.getRandomDateTime();
+                float rndSum = minSum + random.nextFloat() * (maxSum - minSum);
 
-        for (int i = 0; i <= countOfOperations; i++) {
-            int rndPos = random.nextInt(posList.size());
-            LocalDateTime time = timeGenerator.getRandomDateTime();
-            float rndSum = minSum + random.nextFloat() * (maxSum - minSum);
+                StringBuilder lineBuilder = new StringBuilder();
+                lineBuilder.append(i).append(gap);
+                lineBuilder.append(formatter.format(time)).append(gap);
+                lineBuilder.append(posList.get(rndPos)).append(gap);
+                lineBuilder.append(String.format(Locale.US, "%.2f", rndSum)).append(gap);
+                bufferedWriter.write(lineBuilder.toString());
+                bufferedWriter.newLine();
+            }
 
-
-            StringBuilder lineBuilder = new StringBuilder();
-            lineBuilder.append(i).append(gap);
-            lineBuilder.append(formatter.format(time)).append(gap);
-            lineBuilder.append(posList.get(rndPos)).append(gap);
-            lineBuilder.append(String.format(Locale.US, "%.2f", rndSum)).append(gap);
-            bufferedWriter.write(lineBuilder.toString());
-            bufferedWriter.newLine();
+            bufferedWriter.flush();
         }
-
-        bufferedWriter.flush();
-        bufferedWriter.close();
-        fileWriter.close();
     }
 
 
